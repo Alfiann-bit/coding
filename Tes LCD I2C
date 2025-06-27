@@ -1,0 +1,17 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Alamat I2C biasanya 0x27 atau 0x3F
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+  Wire.begin(21, 22); // SDA, SCL
+  lcd.begin();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Halo ESP32!");
+}
+
+void loop() {
+  // kosong
+}
