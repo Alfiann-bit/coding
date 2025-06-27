@@ -1,0 +1,56 @@
+#define S0 4
+#define S1 5
+#define S2 6
+#define S3 7
+#define sensorOut 8
+
+int redFrequency = 0;
+int greenFrequency = 0;
+int blueFrequency = 0;
+
+void setup() {
+  Serial.begin(9600);
+
+  // Set pin sebagai input/output
+  pinMode(S0, OUTPUT);
+  pinMode(S1, OUTPUT);
+  pinMode(S2, OUTPUT);
+  pinMode(S3, OUTPUT);
+  pinMode(sensorOut, INPUT);
+
+  // Set skala output frekuensi ke 20%
+  digitalWrite(S0, HIGH);
+  digitalWrite(S1, LOW);
+
+  Serial.println("Sensor Warna TCS3200 Siap...");
+}
+
+void loop() {
+  // Baca Merah
+  digitalWrite(S2, LOW);
+  digitalWrite(S3, LOW);
+  delay(100);
+  redFrequency = pulseIn(sensorOut, LOW);
+
+  // Baca Hijau
+  digitalWrite(S2, HIGH);
+  digitalWrite(S3, HIGH);
+  delay(100);
+  greenFrequency = pulseIn(sensorOut, LOW);
+
+  // Baca Biru
+  digitalWrite(S2, LOW);
+  digitalWrite(S3, HIGH);
+  delay(100);
+  blueFrequency = pulseIn(sensorOut, LOW);
+
+  // Cetak ke Serial Monitor
+  Serial.print("Merah: ");
+  Serial.print(redFrequency);
+  Serial.print(" | Hijau: ");
+  Serial.print(greenFrequency);
+  Serial.print(" | Biru: ");
+  Serial.println(blueFrequency);
+
+  delay(500);
+}
