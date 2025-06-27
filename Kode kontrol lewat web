@@ -1,0 +1,62 @@
+#include <WiFi.h>
+
+// Ganti dengan WiFi kamu
+const char* ssid = "NAMA_WIFI";
+const char* password = "PASSWORD_WIFI";
+
+// Pin motor
+#define ENA 25
+#define IN1 26
+#define IN2 27
+
+WiFiServer server(80); // Port web server
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  Serial.println("Menghubungkan ke WiFi...");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+  Serial.println("\nTerhubung ke WiFi");
+  Serial.println(WiFi.localIP());
+
+  server.begin();
+
+  pinMode(ENA, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+}
+
+void loop() {
+  WiFiClient client = server.available();
+  if (client) {
+    String request = client.readStringUntil('\r');
+    client.flush();
+
+    if (request.indexOf("/maju") != -1) {
+      digitalWrite(IN1, HIGH);
+      digitalWrite(IN2, LOW);
+      analogWrite(ENA, 200);  // Kecepatan
+    } else if (request.indexOf("/mundur") != -1) {
+      digitalWrite(IN1, LOW);
+      digitalWrite(IN2, HIGH);
+      analogWrite(ENA, 200);
+    } else if (request.indexOf("/stop") != -1) {
+      analogWrite(ENA, 0);
+    }
+
+    // Kirim halaman web
+    client.println("HTTP/1.1 200 OK");
+    client.println("Content-type:text/html");
+    client.println();
+    client.println("<html><head><title>Kontrol Motor</title></head><body>");
+    client.println("<h1>Kendalikan Motor PG45</h1>");
+    client.println("<a href=\"/maju\"><button>Maju</button></a>");
+    client.println("<a href=\"/mundur\"><button>Mundur</button></a>");
+    client.println("<a href=\"/stop\"><button>Stop</button></a>");
+    client.println("</body></html>");
+    client.println();
+  }
+}
