@@ -1,0 +1,33 @@
+#define TRIG_PIN 9
+#define ECHO_PIN 10
+
+void setup() {
+  Serial.begin(9600);          // Inisialisasi komunikasi serial
+  pinMode(TRIG_PIN, OUTPUT);   // Trig sebagai output
+  pinMode(ECHO_PIN, INPUT);    // Echo sebagai input
+}
+
+void loop() {
+  long duration;
+  float distance;
+
+  // Kirim pulsa ultrasonik
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  // Baca waktu pantulan
+  duration = pulseIn(ECHO_PIN, HIGH);
+
+  // Hitung jarak (dalam cm)
+  distance = duration * 0.0343 / 2;
+
+  // Tampilkan hasil ke Serial Monitor
+  Serial.print("Jarak: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  delay(500); // jeda setengah detik
+}
